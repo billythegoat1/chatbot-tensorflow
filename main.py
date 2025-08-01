@@ -81,26 +81,40 @@ class ChatbotAssistant:
 
         return words
 
+    
+    def bag_of_words(self, words):
+        return [1 if word in words else 0 for word in self.vocabulary]
     @staticmethod
     def parse_intents(self):
-
+        lemmatizer = nltk.WordNetLemmatizer
         if os.path.exists(self.intense_path):
             with open(self.intents_path, 'r') as f:
                 intents_data = json.load(f)
 
-            intents = []
-            intents_responses = []
-            vocabulary = []
-            documents = []
-
+    
+            #Go through every intent dictionary
             for intent in intents_data['intents']:
-                if intent['tag'] not in intents:
-                    intents.append(intent['tag'])
-                    intents_responses[intent['tag']] = intent['responses']
-                for pattern in intents['patterns']:
+                #if it's a new tag, append it to the dictionary
+                if intent['tag'] not in self.intents:
+                    self.intents.append(intent['tag'])
+                    self.intents_responses[intent['tag']] = intent['responses']
+
+                for pattern in intent['patterns']:
                     pattern_words = self.tokenize_and_lemmatize(pattern)
-                    vocabulary.extend(pattern_words)
-                    documents.append((pattern_words, intent['tag']))
+                    self.vocabulary.extend(pattern_words)
+                    self.documents.append((pattern_words, intent['tag']))
+
+                self.vocabulary = sorted(set(self.vocabulary))
+
+    def prepare_data(self):
+        bags = []
+        indices = []
+
+        for document in self.documents:
+            words = self.documents[0]
+            bag = self.bag_of_words(words)
+
+    
 
 
 
